@@ -1,0 +1,27 @@
+#+title: ft_printf tests description
+* PROTOTYPE
+#+begin_src c
+int ft_printf(const char *, ...);
+#+end_src
+
+* MANDATORY PART
+** %c
+#+begin_quote
+The =int= argument is converted to an =unsigned char= and the resulting character is written.
+#+end_quote
+** %s
+** %p
+** %d
+** %i
+** %u
+** %x
+** %X
+** %%
+
+* BONUS PART
+** -
+** 0
+** .
+** #
+** ' '
+** +
