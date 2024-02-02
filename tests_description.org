@@ -9,77 +9,263 @@ int ft_printf(const char *, ...);
 #+begin_quote
 The =int= argument is converted to an =unsigned char= and the resulting character is written.
 #+end_quote
-1. Normal printable char ([32-126])
-2. Normal printable char ([32-126]) w/ spaces around in original string
-3. Multiple basic case
-   1. Normal printable chars ([32-126])
-   2. Normal printable char ([32-126]) w/ spaces around in original string
-4. Non-printable char ([0-31/127])
-5. Negative char
-6. High unsigned char > 127
-7. High int > 255
+1. Normal printable char ([32-126]) + w/ spaces
+2. Multiple Normal printable chars ([32-126]) + w/ spaces
+3. Non-printable chars ([0-31/127])
+4. Negative char
+5. High unsigned char > 127
+6. High int > 255
+7. All tests in one call
+8. All tests w/out spaces
+
 ** %s
 #+begin_quote
-The =const char *= argument is excpected to be a pointer to an array of character type (pointer to a string). Characters from the array are writtent up to (*but not including*) a terminating null byte ('\0').
+The =const char *= argument is excpected to be a pointer to an array of character type (pointer to a string). Characters from the array are written up to (*but not including*) a terminating null byte ('\0').
 #+end_quote
 1. Normal string
-2. Normal string with spaces in arg
+2. Normal string with spaces in non-formated string
 3. Empty string
+4. Big string
+5. All tests in one call
+6. All tests w/out spaces
+
 ** %p
 #+begin_quote
 The =void *= pointer argument is printed in hexadecimal.
 #+end_quote
+1. Normal pointer
+2. Normal pointer with spaces in non-formated string
+3. Normal number
+4. Negative number
+5. ULONG_MAX
+6. ULONG_MIN
+7. All tests in one call
+8. All tests w/out spaces
+
 ** %d
 #+begin_quote
 The =int= argument is converted to a decimal notation.
 #+end_quote
+1. Normal positive number + w/ spaces
+2. Normal negative number + w/ spaces
+3. INT_MAX
+4. INT_MIN
+5. UINT_MAX
+6. Hexa number
+7. Bin number
+8. Octal number
+9. All tests in one
+10. All tests w/out spaces
+
 ** %i
 #+begin_quote
 The =int= argument is converted to a decimal notation.
 #+end_quote
+1. Normal positive number + w/ spaces
+2. Normal negative number + w/ spaces
+3. INT_MAX
+4. INT_MIN
+5. UINT_MAX
+6. Hexa number
+7. Bin number
+8. Octal number
+9. All tests in one
+10. All tests w/out spaces
+
 ** %u
 #+begin_quote
 The =unsigned int= argument is converted to unsigned decimal.
 #+end_quote
+1. Normal number + w/ spaces
+2. Negative number
+3. UINT_MAX
+4. Hexa number
+5. Bin number
+6. Octal number
+7. All tests in one
+8. All tests w/out spaces
+
 ** %x
 #+begin_quote
 The =unsigned int= argument is converted to unsigned hexadecimal. The letters *abcdef* are used for *x* conversion.
 #+end_quote
+1. Normal number + w/ spaces
+2. Negative number
+3. UINT_MAX
+4. Hexa number
+5. Bin number
+6. Octal number
+7. All tests in one
+8. All tests w/out spaces
+
 ** %X
 #+begin_quote
 The =unsigned int= argument is converted to unsigned hexadecimal. The letters *ABCDEF* are used for *X* conversion.
 #+end_quote
+1. Normal number + w/ spaces
+2. Negative number
+3. UINT_MAX
+4. Hexa number
+5. Bin number
+6. Octal number
+7. All tests in one
+8. All tests w/out spaces
+
 ** %%
 #+begin_quote
 A '%' is written. No argument is converted.
 #+end_quote
+1. Normal test + w/ spaces
+2. Multiple use of flag w/out spaces
+
+** Miscellaneous
+1. ft_printf(0)
+2. BIG nb of conversions
 
 * BONUS PART
 ** -
 #+begin_quote
 The converted value is to be left adjusted on the field boundary. The converted value is padded on the right with blanks. *A - overrides a 0 if both are given*.
 #+end_quote
+*** %c
+1. minus alone
+2. minus 1
+3. minus 5
+4. minus followed by zero
+5. minus INT_MAX
+6. minus INT_MAX+1
+*** %s
+1. minus n=len(str)
+2. minus n<len(str)
+3. minus n>len(str)
+4. minus then zero
+5. minus INT_MAX
+6. minus INT_MAX+1
+*** %p
+1. minus n=len(res)
+2. minus n<len(res)
+3. minus n>len(res)
+4. minus then zero
+5. minus INT_MAX
+6. minus INT_MAX+1
+*** %d
+1. minus n=len(res)
+2. minus n<len(res)
+3. minus n>len(res)
+4. minus then zero
+5. minus INT_MAX
+6. minus INT_MAX+1
+*** %i
+1. minus n=len(res)
+2. minus n<len(res)
+3. minus n>len(res)
+4. minus then zero
+5. minus INT_MAX
+6. minus INT_MAX+1
+*** %u
+1. minus n=len(res)
+2. minus n<len(res)
+3. minus n>len(res)
+4. minus then zero
+5. minus INT_MAX
+6. minus INT_MAX+1
+*** %x
+1. minus n=len(res)
+2. minus n<len(res)
+3. minus n>len(res)
+4. minus then zero
+5. minus INT_MAX
+6. minus INT_MAX+1
+*** %X
+1. minus n=len(nb)
+2. minus n<len(nb)
+3. minus n>len(nb)
+4. minus then zero
+5. minus INT_MAX
+6. minus INT_MAX+1
+*** %%
+
+
 ** 0
 #+begin_quote
 The value should be zero padded. The converted value is padded on the left with zeros rather than blanks. *If the 0 and - flags both appear, the 0 is ignored.* If a precision given with d, i, o, u, x or X, 0 flag ignored. For other conversion, undefined behavior.
 #+end_quote
+*** %c
+*** %s
+*** %p
+*** %d
+*** %i
+*** %u
+*** %x
+*** %X
+*** %%
+
 ** . (precision)
 #+begin_quote
 [...] followed by an optional decimal string. "*" to specify that precision is given in next argument, "*x$" for x-th argument. If only '.', precision = 0. Precision < 0 = precision ommited. *Minimum number of digits for d, i, o, u, x, X and maximum number of chars for s.
 #+end_quote
+*** %c
+*** %s
+*** %p
+*** %d
+*** %i
+*** %u
+*** %x
+*** %X
+*** %%
+
 ** Field width
 #+begin_quote
 An optional digit string specifying min field width. If converted value has fewer characters than field width => padded with spaces on the left (right if -).
 #+end_quote
+*** %c
+*** %s
+*** %p
+*** %d
+*** %i
+*** %u
+*** %x
+*** %X
+*** %%
+
 ** #
 #+begin_quote
 Value converted to an "alternate form". For x and X a nonzero result has 0x or 0X prepended to it.
 #+end_quote
+*** %c
+*** %s
+*** %p
+*** %d
+*** %i
+*** %u
+*** %x
+*** %X
+*** %%
+
 ** ' '
 #+begin_quote
 A blank should be left before a positive number (or empty string) produced by a signed conversion.
 #+end_quote
+*** %c
+*** %s
+*** %p
+*** %d
+*** %i
+*** %u
+*** %x
+*** %X
+*** %%
+
 ** +
 #+begin_quote
 A sign should always be placed before a number porduced by a signed conversion. *+ overrides space*
 #+end_quote
+*** %c
+*** %s
+*** %p
+*** %d
+*** %i
+*** %u
+*** %x
+*** %X
+*** %%
