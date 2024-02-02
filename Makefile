@@ -6,7 +6,7 @@
 #    By: bazaluga <bazaluga@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/02/02 10:23:20 by bazaluga          #+#    #+#              #
-#    Updated: 2024/02/02 10:30:14 by bazaluga         ###   ########.fr        #
+#    Updated: 2024/02/02 11:33:38 by bazaluga         ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -18,9 +18,9 @@ PRINTFSRC	=	../ft_printf/src
 
 PRINTFINCL	=	../ft_printf/includes
 
-PRINTF		=	$(PRINTFDIR)/ft_printf.so
+PRINTF		=	$(PRINTFDIR)/libftprintf.so
 
-PRINTFSO	=	obj/ft_printf.so
+PRINTFSO	=	obj/libftprintf.so
 
 TESTRULE	=	breaker
 
@@ -73,11 +73,11 @@ $(LMALLOC):	$(MALLOC)
 
 ifdef MACOS
 $(PRINTFSO):	$(PRINTFDIR)
-			rm -rf libft/*
-			mkdir -p libft
-			cp $(PRINTFDIR)/* ./libft
-			make -C libft/ $(PRINTFRULE)
-			mv libft/libft.so $(PRINTFSO)
+			rm -rf ft_printf/*
+			mkdir -p ft_printf
+			cp $(PRINTFDIR)/* ./ft_printf
+			make -C ft_printf/ $(PRINTFRULE)
+			mv ft_printf/libftprintf.so $(PRINTFSO)
 else
 $(PRINTFSO):	$(PRINTFDIR)
 			make -C $(PRINTFDIR) $(PRINTFRULE)
