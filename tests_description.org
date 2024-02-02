@@ -9,19 +9,77 @@ int ft_printf(const char *, ...);
 #+begin_quote
 The =int= argument is converted to an =unsigned char= and the resulting character is written.
 #+end_quote
+1. Normal printable char ([32-126])
+2. Normal printable char ([32-126]) w/ spaces around in original string
+3. Multiple basic case
+   1. Normal printable chars ([32-126])
+   2. Normal printable char ([32-126]) w/ spaces around in original string
+4. Non-printable char ([0-31/127])
+5. Negative char
+6. High unsigned char > 127
+7. High int > 255
 ** %s
+#+begin_quote
+The =const char *= argument is excpected to be a pointer to an array of character type (pointer to a string). Characters from the array are writtent up to (*but not including*) a terminating null byte ('\0').
+#+end_quote
+1. Normal string
+2. Normal string with spaces in arg
+3. Empty string
 ** %p
+#+begin_quote
+The =void *= pointer argument is printed in hexadecimal.
+#+end_quote
 ** %d
+#+begin_quote
+The =int= argument is converted to a decimal notation.
+#+end_quote
 ** %i
+#+begin_quote
+The =int= argument is converted to a decimal notation.
+#+end_quote
 ** %u
+#+begin_quote
+The =unsigned int= argument is converted to unsigned decimal.
+#+end_quote
 ** %x
+#+begin_quote
+The =unsigned int= argument is converted to unsigned hexadecimal. The letters *abcdef* are used for *x* conversion.
+#+end_quote
 ** %X
+#+begin_quote
+The =unsigned int= argument is converted to unsigned hexadecimal. The letters *ABCDEF* are used for *X* conversion.
+#+end_quote
 ** %%
+#+begin_quote
+A '%' is written. No argument is converted.
+#+end_quote
 
 * BONUS PART
 ** -
+#+begin_quote
+The converted value is to be left adjusted on the field boundary. The converted value is padded on the right with blanks. *A - overrides a 0 if both are given*.
+#+end_quote
 ** 0
-** .
+#+begin_quote
+The value should be zero padded. The converted value is padded on the left with zeros rather than blanks. *If the 0 and - flags both appear, the 0 is ignored.* If a precision given with d, i, o, u, x or X, 0 flag ignored. For other conversion, undefined behavior.
+#+end_quote
+** . (precision)
+#+begin_quote
+[...] followed by an optional decimal string. "*" to specify that precision is given in next argument, "*x$" for x-th argument. If only '.', precision = 0. Precision < 0 = precision ommited. *Minimum number of digits for d, i, o, u, x, X and maximum number of chars for s.
+#+end_quote
+** Field width
+#+begin_quote
+An optional digit string specifying min field width. If converted value has fewer characters than field width => padded with spaces on the left (right if -).
+#+end_quote
 ** #
+#+begin_quote
+Value converted to an "alternate form". For x and X a nonzero result has 0x or 0X prepended to it.
+#+end_quote
 ** ' '
+#+begin_quote
+A blank should be left before a positive number (or empty string) produced by a signed conversion.
+#+end_quote
 ** +
+#+begin_quote
+A sign should always be placed before a number porduced by a signed conversion. *+ overrides space*
+#+end_quote

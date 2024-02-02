@@ -6,7 +6,7 @@
 #    By: bazaluga <bazaluga@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/02/02 10:23:20 by bazaluga          #+#    #+#              #
-#    Updated: 2024/02/02 11:33:38 by bazaluga         ###   ########.fr        #
+#    Updated: 2024/02/02 13:01:30 by bazaluga         ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -26,9 +26,9 @@ TESTRULE	=	breaker
 
 NAME 		=	run-breaker
 
-SRCN 		=	src/allTests.c src/CuTest.c src/utils.c
+SRCN 		=	$(shell find * -type f -name "*.c" ! -name "*static*")
 
-SRCS 		=	src/staticAllTests.c src/CuTest.c src/utils.c
+SRCS 		=	$(shell find * -type f -name "*static*.c") src/CuTest.c src/utils.c
 
 MALLOC		=	src/malloc.c
 
