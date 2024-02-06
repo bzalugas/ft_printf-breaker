@@ -6,7 +6,7 @@
 /*   By: bazaluga <bazaluga@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/02 10:31:56 by bazaluga          #+#    #+#             */
-/*   Updated: 2024/02/02 11:13:13 by bazaluga         ###   ########.fr       */
+/*   Updated: 2024/02/06 15:04:34 by bazaluga         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@
 # include <sys/wait.h>
 # include <limits.h>
 # include <dlfcn.h>
+# include <stdarg.h>
 # define BUFFSIZE 30
 # define BUFFBSIZE 2048
 # define BUFFBBSIZE 8192
@@ -80,7 +81,7 @@ extern t_ft				fcts[N_TESTS_FUN];
 extern print_buff		buff;
 extern int				g_in_fun;
 extern int				fds[2];
-extern char				pipe_buff[BUFFSIZE];
+extern char				pipe_buff[2147483648];
 extern int				g_free_called;
 
 /*********************************** MACROS ***********************************/
@@ -136,6 +137,7 @@ void	add_color_buff(char c);
 void	printbuff();
 void	manage_outputs(int to_close);
 void	manage_pipes(int get_read, int get_write);
+char	*ft_strjoin(char const *s1, char const *s2);
 
 /****************************** TESTS FUNCTIONS *******************************/
 
