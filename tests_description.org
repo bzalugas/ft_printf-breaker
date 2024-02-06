@@ -139,133 +139,206 @@ The converted value is to be left adjusted on the field boundary. The converted 
 2. minus n<len(str)
 3. minus n>len(str)
 4. minus then zero
-5. minus INT_MAX
-6. minus INT_MAX+1
 *** %p
 1. minus n=len(res)
 2. minus n<len(res)
 3. minus n>len(res)
 4. minus then zero
-5. minus INT_MAX
-6. minus INT_MAX+1
 *** %d
 1. minus n=len(res)
 2. minus n<len(res)
 3. minus n>len(res)
 4. minus then zero
-5. minus INT_MAX
-6. minus INT_MAX+1
 *** %i
 1. minus n=len(res)
 2. minus n<len(res)
 3. minus n>len(res)
 4. minus then zero
-5. minus INT_MAX
-6. minus INT_MAX+1
 *** %u
 1. minus n=len(res)
 2. minus n<len(res)
 3. minus n>len(res)
 4. minus then zero
-5. minus INT_MAX
-6. minus INT_MAX+1
 *** %x
 1. minus n=len(res)
 2. minus n<len(res)
 3. minus n>len(res)
 4. minus then zero
-5. minus INT_MAX
-6. minus INT_MAX+1
 *** %X
 1. minus n=len(nb)
 2. minus n<len(nb)
 3. minus n>len(nb)
 4. minus then zero
-5. minus INT_MAX
-6. minus INT_MAX+1
-*** %%
-
 
 ** 0
 #+begin_quote
 The value should be zero padded. The converted value is padded on the left with zeros rather than blanks. *If the 0 and - flags both appear, the 0 is ignored.* If a precision given with d, i, o, u, x or X, 0 flag ignored. For other conversion, undefined behavior.
 #+end_quote
 *** %c
+1. %0c
+2. %01c
+3. %05c
+4. %05-3c
 *** %s
+1. %0s
+2. %01s
+3. n > len(s)
+4. %05-3s
 *** %p
+1. %0p
+2. %01p
+3. %012p
+4. %012-11p
 *** %d
+1. %0d
+2. %01d
+3. n > len(d)
+4. %0n-nd
 *** %i
+1. %0i
+2. %01i
+3. n > len(i)
+4. %0n-ni
 *** %u
+1. %0u
+2. %01u
+3. n > len(u)
+4. %0n-nu
 *** %x
+1. %0x
+2. %01x
+3. n > len(x)
+4. %0n-nx
 *** %X
-*** %%
+1. %0X
+2. %01X
+3. n > len(X)
+4. %0n-nX
 
 ** . (precision)
 #+begin_quote
-[...] followed by an optional decimal string. "*" to specify that precision is given in next argument, "*x$" for x-th argument. If only '.', precision = 0. Precision < 0 = precision ommited. *Minimum number of digits for d, i, o, u, x, X and maximum number of chars for s.
+[...] followed by an optional decimal digit string. "*" to specify that precision is given in next argument, "*x$" for x-th argument. If only '.', precision = 0. Precision < 0 = precision ommited. *Minimum number of digits for d, i, o, u, x, X and maximum number of chars for s*.
 #+end_quote
-*** %c
 *** %s
-*** %p
+1. %.s
+2. %.ns n < len(s)
+3. %.ns n > len(s)
+4. %.*s arg < len(s)
+5. %.*2$s arg < len(s)
+6. %.ns n = int_max
+7. %.ns n = int_max+1
 *** %d
+1. %.d
+2. %.nd n < len(d)
+3. %.nd n > len(d)
+4. %.*d arg > len(d)
+5. %.*2$d arg > len(d)
 *** %i
+1. %.i
+2. %.ni n < len(i)
+3. %.ni n > len(i)
+4. %.*i arg > len(i)
+5. %.*2$i arg > len(i)
 *** %u
+1. %.u
+2. %.nu n < len(u)
+3. %.nu n > len(u)
+4. %.*u arg > len(u)
+5. %.*2$u arg > len(u)
 *** %x
+1. %.x
+2. %.nx n < len(x)
+3. %.nx n > len(x)
+4. %.*x arg > len(x)
+5. %.*2$x arg > len(x)
 *** %X
-*** %%
+1. %.X
+2. %.nX n < len(X)
+3. %.nX n > len(X)
+4. %.*X arg > len(X)
+5. %.*2$X arg > len(X)
 
 ** Field width
 #+begin_quote
 An optional digit string specifying min field width. If converted value has fewer characters than field width => padded with spaces on the left (right if -).
 #+end_quote
 *** %c
+1. %1c
+2. %5c
+3. %nc n = int_max
+4. %nc n = int_max+1
 *** %s
+1. %1s
+2. %ns n = len(s)
+3. %ns n > len(s)
 *** %p
+1. %1p
+2. %np n = len(p)
+3. %np n > len(p)
 *** %d
+1. %nd n < len(d)
+2. %nd n = len(d)
+3. %nd n > len(d)
 *** %i
+1. %ni n < len(i)
+2. %ni n = len(i)
+3. %ni n > len(i)
 *** %u
+1. %nu n < len(u)
+2. %nu n = len(u)
+3. %nu n > len(u)
 *** %x
+1. %nx n < len(x)
+2. %nx n = len(x)
+3. %nx n > len(x)
 *** %X
-*** %%
+1. %nX n < len(X)
+2. %nX n = len(X)
+3. %nX n > len(X)
 
 ** #
 #+begin_quote
 Value converted to an "alternate form". For x and X a nonzero result has 0x or 0X prepended to it.
 #+end_quote
-*** %c
-*** %s
-*** %p
-*** %d
-*** %i
-*** %u
 *** %x
+1. %#x
+2. %#nx n > len(x)
+3. %#-nx n > len(x)
+4. %#.nx n > len(x)
+5. %#0nx n > len(x)
 *** %X
-*** %%
+1. %#X
+2. %#nX n > len(X)
+3. %#-nX n > len(X)
+4. %#.nX n > len(X)
+5. %#0nX n > len(X)
 
 ** ' '
 #+begin_quote
 A blank should be left before a positive number (or empty string) produced by a signed conversion.
 #+end_quote
-*** %c
-*** %s
-*** %p
 *** %d
+1. % d, d > 0
+2. % d, d = 0
+3. % d, d < 0
 *** %i
-*** %u
-*** %x
-*** %X
-*** %%
+1. % i, i > 0
+2. % i, i = 0
+3. % i, i < 0
 
 ** +
 #+begin_quote
 A sign should always be placed before a number porduced by a signed conversion. *+ overrides space*
 #+end_quote
-*** %c
-*** %s
-*** %p
 *** %d
+1. %+d, d < 0
+2. %+d, d = 0
+3. %+d, d > 0
+4. % +d, d > 0
+5. %+ d, d > 0
 *** %i
-*** %u
-*** %x
-*** %X
-*** %%
+1. %+i, i < 0
+2. %+i, i = 0
+3. %+i, i > 0
+4. % +i, i > 0
+5. %+ i, i > 0
