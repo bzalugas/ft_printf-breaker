@@ -6,7 +6,7 @@
 /*   By: bazaluga <bazaluga@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/02 10:32:11 by bazaluga          #+#    #+#             */
-/*   Updated: 2024/02/07 02:16:54 by bazaluga         ###   ########.fr       */
+/*   Updated: 2024/02/07 02:27:02 by bazaluga         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 /*        RUN TESTS         */
 /****************************/
 
-void	map_stdout(char opt, size_t size, char *res)
+void	map_stdout(char opt, size_t size, size_t start, char *res)
 {
 	static int	fdout = -1;
 	static int	fdmap = -1;
@@ -27,30 +27,24 @@ void	map_stdout(char opt, size_t size, char *res)
 
 	if (opt == 1)
 	{
-		fdout = dup(STDOUT_FILENO);
-		fdmap = shm_open(map_name, O_RDWR | O_CREAT, 0666);
+		if (fdout == -1)
+			fdout = dup(STDOUT_FILENO);
 		if (fdmap == -1)
 		{
-			perror("Error with shm_open");
-			exit(1);
+			fdmap = shm_open(map_name, O_RDWR | O_CREAT, 0666);
+			if (fdmap == -1)
+			{
+				perror("Error with shm_open");
+				exit(1);
+			}
+			ftruncate(fdmap, size);
+			close(STDOUT_FILENO);
+			dup2(fdmap, STDOUT_FILENO);
 		}
-		ftruncate(fdmap, size);
-		/* *map = (char *)mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE, fdmap, 0); */
-		/* if (*map == MAP_FAILED) */
-		/* { */
-		/* 	perror("Error with mmap"); */
-		/* 	exit(1); */
-		/* } */
-		close(STDOUT_FILENO);
-		dup2(fdmap, STDOUT_FILENO);
 	}
 	else if (opt == 2)
 	{
-		lseek(fdmap, 0, SEEK_SET);
-	}
-	else
-	{
-		map = (char *)mmap(NULL, size, PROT_READ, MAP_PRIVATE, fdmap, 0);
+		map = (char *)mmap(NULL, size, PROT_READ, MAP_PRIVATE, fdmap, start);
 		if (map == MAP_FAILED)
 		{
 			perror("Error with mmap");
@@ -58,10 +52,35 @@ void	map_stdout(char opt, size_t size, char *res)
 		}
 		strncpy(res, map, size);
 		munmap(map, size);
+		map = NULL;
+	}
+	else if (opt == 3)
+	{
 		close(STDOUT_FILENO);
 		close(fdmap);
+		fdmap = -1;
 		dup2(fdout, STDOUT_FILENO);
 		close(fdout);
+		fdout = -1;
+		shm_unlink(map_name);
+	}
+	else
+	{
+		map = (char *)mmap(NULL, size, PROT_READ, MAP_PRIVATE, fdmap, start);
+		if (map == MAP_FAILED)
+		{
+			perror("Error with mmap");
+			exit(1);
+		}
+		strncpy(res, map, size);
+		munmap(map, size);
+		map = NULL;
+		close(STDOUT_FILENO);
+		close(fdmap);
+		fdmap = -1;
+		dup2(fdout, STDOUT_FILENO);
+		close(fdout);
+		fdout = -1;
 		shm_unlink(map_name);
 	}
 }
@@ -94,16 +113,16 @@ void	test_ft_printf(int check_real, char *expected, char *str, ...)
 		perror("calloc error.");
 		exit(1);
 	}
-	map_stdout(1, 2147483647, NULL);
+	map_stdout(1, 2147483647, 0, NULL);
 	printf("%02147483647d", 23);
 	fflush(stdout);
 	bzero(res, 2147483648);
-	map_stdout(0, 2147483647, res);
-	map_stdout(1, 2147483647, NULL);
+	map_stdout(2, 2147483647, 0, res);
+	/* map_stdout(1, 2147483647, NULL); */
 	printf("%02147483647d", 23);
 	fflush(stdout);
 	bzero(res2, 2147483648);
-	map_stdout(0, 2147483647, res2);
+	map_stdout(0, 2147483647, 2147483647, res2);
 	if (strncmp(res, res2, 2147483647))
 		printf("Not the same !!!\n");
 	else
