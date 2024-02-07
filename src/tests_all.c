@@ -6,7 +6,7 @@
 /*   By: bazaluga <bazaluga@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/02 10:32:11 by bazaluga          #+#    #+#             */
-/*   Updated: 2024/02/07 03:15:18 by bazaluga         ###   ########.fr       */
+/*   Updated: 2024/02/07 03:53:14 by bazaluga         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,28 +102,52 @@ void	map_stdout(char opt, size_t size, int start, char *res)
 	}
 }
 
-void	test_ft_printf(int check_real, char *expected, char *str, ...)
+void	test_int_max_ft_printf(char *str, va_list args)
 {
-	char res[8];
-	bzero(res, 8);
-	map_stdout(1, 8, 0, NULL);
-	printf("a");
+	char	*res1 = calloc((size_t)INT_MAX + 1, sizeof(char));
+	char	*res2 = calloc((size_t)INT_MAX + 1, sizeof(char));
+	va_list	args2;
+
+	if (!res1 || !res2)
+	{
+		perror("calloc error.");
+		exit(EXIT_FAILURE);
+	}
+	va_copy(args2, args);
+	map_stdout(1, INT_MAX, 0, NULL);
+	vprintf(str, args);
 	fflush(stdout);
-	/* map_stdout(2, 1, 0, res); */
-	printf("b");
+	map_stdout(0, INT_MAX, 0, res1);
+	map_stdout(1, INT_MAX, 0, NULL);
+	vprintf(str, args2);
 	fflush(stdout);
-	/* map_stdout(2, 1, 1, res); */
-	printf("c");
-	fflush(stdout);
-	/* map_stdout(2, 1, 2, res); */
-	printf("d");
-	fflush(stdout);
-	/* map_stdout(2, 1, 3, res); */
-	printf("e");
-	fflush(stdout);
-	/* map_stdout(2, 1, 4, res); */
-	map_stdout(0, 7, 0, res);
-	printf("%s.\n", res);
+	map_stdout(0, INT_MAX, 0, res2);
+	if (strncmp(res1, res2, INT_MAX))
+		printf("Strings are different.\n");
+	else
+		printf("Strings are the same.\n");
+}
+
+void	test_ft_printf(int check_real, char *expected, int int_max, char *str, ...)
+{
+	va_list	args;
+	va_start(args, str);
+	if (int_max)
+		test_int_max_ft_printf(str, args);
+	else
+	{
+		char	res1[BUFFSIZE];
+		char	res2[BUFFSIZE];
+
+		map_stdout(1, BUFFSIZE * 2, 0, NULL);
+		printf("coucou %d\n", 23);
+		fflush(stdout);
+		map_stdout(2, BUFFSIZE, 0, res1);
+		printf("Bonjour %d\n", 23);
+		fflush(stdout);
+		map_stdout(0, BUFFSIZE, strlen(res1), res2);
+		printf("I want to compare : \n1: %s\n2: %s\n", res1, res2);
+	}
 }
 
 /* void	run_all(char *particular_fun, void *fun) */
@@ -187,6 +211,6 @@ int	main(int argc, char *argv[])
 	/* else */
 	/* 	run_all(NULL, NULL); */
 	/* dlclose(lib); */
-	test_ft_printf(0,NULL,"coucou, %d\n", 23);
+	test_ft_printf(0, NULL, 1, "%02147483647d", 23);
 	return (0);
 }
