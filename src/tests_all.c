@@ -6,7 +6,7 @@
 /*   By: bazaluga <bazaluga@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/02 10:32:11 by bazaluga          #+#    #+#             */
-/*   Updated: 2024/02/07 02:27:02 by bazaluga         ###   ########.fr       */
+/*   Updated: 2024/02/07 03:15:18 by bazaluga         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,12 +18,12 @@
 /*        RUN TESTS         */
 /****************************/
 
-void	map_stdout(char opt, size_t size, size_t start, char *res)
+void	map_stdout(char opt, size_t size, int start, char *res)
 {
 	static int	fdout = -1;
 	static int	fdmap = -1;
-	char		map_name[] = "/map_out";
-	char		*map;
+	static char	map_name[] = "/map_out";
+	static char	*map = NULL;
 
 	if (opt == 1)
 	{
@@ -38,21 +38,33 @@ void	map_stdout(char opt, size_t size, size_t start, char *res)
 				exit(1);
 			}
 			ftruncate(fdmap, size);
+			map = (char *)mmap(NULL, size, PROT_WRITE, MAP_PRIVATE, fdmap, (off_t)start);
+			if (map == MAP_FAILED)
+			{
+				perror("Error with mmap opt 0");
+				exit(1);
+			}
+			bzero(map, size);
+			munmap(map, size);
+			map = NULL;
 			close(STDOUT_FILENO);
 			dup2(fdmap, STDOUT_FILENO);
 		}
 	}
 	else if (opt == 2)
 	{
-		map = (char *)mmap(NULL, size, PROT_READ, MAP_PRIVATE, fdmap, start);
-		if (map == MAP_FAILED)
+		if (!map)
 		{
-			perror("Error with mmap");
-			exit(1);
+			map = (char *)mmap(NULL, size, PROT_READ, MAP_PRIVATE, fdmap, (off_t)start);
+			if (map == MAP_FAILED)
+			{
+				perror("Error with mmap");
+				exit(1);
+			}
+			strncpy(res, map, size);
 		}
-		strncpy(res, map, size);
-		munmap(map, size);
-		map = NULL;
+		else
+			strncpy(res, &map[start], size);
 	}
 	else if (opt == 3)
 	{
@@ -66,13 +78,18 @@ void	map_stdout(char opt, size_t size, size_t start, char *res)
 	}
 	else
 	{
-		map = (char *)mmap(NULL, size, PROT_READ, MAP_PRIVATE, fdmap, start);
-		if (map == MAP_FAILED)
+		if (!map)
 		{
-			perror("Error with mmap");
-			exit(1);
+			map = (char *)mmap(NULL, size, PROT_READ, MAP_PRIVATE, fdmap, (off_t)start);
+			if (map == MAP_FAILED)
+			{
+				perror("Error with mmap opt 0");
+				exit(1);
+			}
+			strncpy(res, map, size);
 		}
-		strncpy(res, map, size);
+		else
+			strncpy(res, &map[start], size);
 		munmap(map, size);
 		map = NULL;
 		close(STDOUT_FILENO);
@@ -84,54 +101,29 @@ void	map_stdout(char opt, size_t size, size_t start, char *res)
 		shm_unlink(map_name);
 	}
 }
+
 void	test_ft_printf(int check_real, char *expected, char *str, ...)
 {
-	/* char	res[9]; */
-	/* char	res2[10]; */
-
-	/* bzero(res, 9); */
-	/* bzero(res2, 10); */
-	/* printf("coucou1\n"); */
-	/* fflush(stdout); */
-	/* map_stdout(1, 8, res); */
-	/* printf("coucou2\n"); */
-	/* fflush(stdout); */
-	/* map_stdout(0, 8, res); */
-	/* printf("coucou3\n"); */
-	/* fflush(stdout); */
-	/* map_stdout(1, 9, res2); */
-	/* printf("coucou23\n"); */
-	/* fflush(stdout); */
-	/* map_stdout(0, 9, res2); */
-	/* printf("middle = %s", res); */
-	/* printf("end = %s", res2); */
-	/* fflush(stdout); */
-	char *res = calloc(2147483648, sizeof(char));
-	char *res2 = calloc(2147483648, sizeof(char));
-	if (!res || !res2)
-	{
-		perror("calloc error.");
-		exit(1);
-	}
-	map_stdout(1, 2147483647, 0, NULL);
-	printf("%02147483647d", 23);
+	char res[8];
+	bzero(res, 8);
+	map_stdout(1, 8, 0, NULL);
+	printf("a");
 	fflush(stdout);
-	bzero(res, 2147483648);
-	map_stdout(2, 2147483647, 0, res);
-	/* map_stdout(1, 2147483647, NULL); */
-	printf("%02147483647d", 23);
+	/* map_stdout(2, 1, 0, res); */
+	printf("b");
 	fflush(stdout);
-	bzero(res2, 2147483648);
-	map_stdout(0, 2147483647, 2147483647, res2);
-	if (strncmp(res, res2, 2147483647))
-		printf("Not the same !!!\n");
-	else
-		printf("The same !!!\n");
-	/* int fd = open("tmp", O_WRONLY | O_CREAT, 0666); */
-	/* write(fd, res, 2147483648); */
-	/* close(fd); */
-	free(res);
-	free(res2);
+	/* map_stdout(2, 1, 1, res); */
+	printf("c");
+	fflush(stdout);
+	/* map_stdout(2, 1, 2, res); */
+	printf("d");
+	fflush(stdout);
+	/* map_stdout(2, 1, 3, res); */
+	printf("e");
+	fflush(stdout);
+	/* map_stdout(2, 1, 4, res); */
+	map_stdout(0, 7, 0, res);
+	printf("%s.\n", res);
 }
 
 /* void	run_all(char *particular_fun, void *fun) */
