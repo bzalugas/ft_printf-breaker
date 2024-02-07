@@ -6,95 +6,113 @@
 /*   By: bazaluga <bazaluga@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/02 10:32:11 by bazaluga          #+#    #+#             */
-/*   Updated: 2024/02/06 15:18:24 by bazaluga         ###   ########.fr       */
+/*   Updated: 2024/02/07 02:16:54 by bazaluga         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/ft_printf-breaker.h"
+#include <sys/mman.h>
+#include <fcntl.h>
 
 /****************************/
 /*        RUN TESTS         */
 /****************************/
-int			fds[2];
-char		pipe_buff[2147483648];
-#include <fcntl.h>
-#include <sys/statvfs.h>
-void	pipe_stdout(int start)
+
+void	map_stdout(char opt, size_t size, char *res)
 {
-	static int	stdout = -1;
-	static int f = -1;
-	if (start)
+	static int	fdout = -1;
+	static int	fdmap = -1;
+	char		map_name[] = "/map_out";
+	char		*map;
+
+	if (opt == 1)
 	{
-		/* pipe_buff = (char *)(calloc(2147483648, sizeof(char))); */
-		/* if (!pipe_buff) */
-		/* { */
-		/* 	perror("ERROR MALLOC\n"); */
-		/* 	exit(EXIT_FAILURE); */
-		/* } */
-		stdout = dup(STDOUT_FILENO);
-		struct statvfs stats;
-		char *user = getenv("USER");
-		char *path1 = ft_strjoin("/home/", user);
-		char *path = ft_strjoin(path1, "/sgoinfre/");
-		int ret = statvfs(path, &stats);
-		if (!ret)
+		fdout = dup(STDOUT_FILENO);
+		fdmap = shm_open(map_name, O_RDWR | O_CREAT, 0666);
+		if (fdmap == -1)
 		{
-			const unsigned int GB = 1024 * 1024 * 1024;
-			if ((stats.f_bsize * stats.f_bavail)/GB >= 3)
-			{
-				write(2, "here\n", 5);
-				f = open(ft_strjoin(path, "tmp"), O_CREAT | O_WRONLY, 0666);
-				dup2(f, STDOUT_FILENO);
-			}
+			perror("Error with shm_open");
+			exit(1);
 		}
-
-
-		/* close(STDOUT_FILENO); */
-		/* if (pipe(fds) == -1) */
+		ftruncate(fdmap, size);
+		/* *map = (char *)mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE, fdmap, 0); */
+		/* if (*map == MAP_FAILED) */
 		/* { */
-		/* 	perror("Pipe error."); */
-		/* 	exit(EXIT_FAILURE); */
+		/* 	perror("Error with mmap"); */
+		/* 	exit(1); */
 		/* } */
-		/* dup2(fds[1], STDOUT_FILENO); */
+		close(STDOUT_FILENO);
+		dup2(fdmap, STDOUT_FILENO);
+	}
+	else if (opt == 2)
+	{
+		lseek(fdmap, 0, SEEK_SET);
 	}
 	else
 	{
-		close(f);
-		/* bzero(pipe_buff, 2147483648); */
-		/* close(fds[1]); */
-		/* fds[1] = -1; */
-		/* read(fds[0], pipe_buff, 2147483647); */
-		/* close(fds[0]); */
-		/* fds[0] = -1; */
-		dup2(stdout, STDOUT_FILENO);
+		map = (char *)mmap(NULL, size, PROT_READ, MAP_PRIVATE, fdmap, 0);
+		if (map == MAP_FAILED)
+		{
+			perror("Error with mmap");
+			exit(1);
+		}
+		strncpy(res, map, size);
+		munmap(map, size);
+		close(STDOUT_FILENO);
+		close(fdmap);
+		dup2(fdout, STDOUT_FILENO);
+		close(fdout);
+		shm_unlink(map_name);
 	}
 }
 void	test_ft_printf(int check_real, char *expected, char *str, ...)
 {
-	/* struct statvfs stats; */
-	/* char *user = getenv("USER"); */
-	/* char *path1 = ft_strjoin("/home/", user); */
-	/* char *path = ft_strjoin(path1, "/sgoinfre"); */
-	/* printf("%s\n", path); */
-	/* int ret = statvfs(path, &stats); */
-	/* if (!ret) */
-	/* { */
-	/* 	const unsigned int KB = 1024 * 1024 * 1024; */
-	/* 	printf("block size = %lu\n", stats.f_bsize); */
-	/* 	printf("Fragment size = %lu\n", stats.f_frsize); */
-	/* 	printf("f_blocks = %lu\n", stats.f_blocks); */
-	/* 	printf("free space = %lu\n", (stats.f_bsize * stats.f_bavail)/KB); */
-	/* } */
-	printf("coucou1\n");
-	fflush(stdout);
-	pipe_stdout(1);
-	/* /\* printf("coucou2\n"); *\/ */
+	/* char	res[9]; */
+	/* char	res2[10]; */
+
+	/* bzero(res, 9); */
+	/* bzero(res2, 10); */
+	/* printf("coucou1\n"); */
+	/* fflush(stdout); */
+	/* map_stdout(1, 8, res); */
+	/* printf("coucou2\n"); */
+	/* fflush(stdout); */
+	/* map_stdout(0, 8, res); */
+	/* printf("coucou3\n"); */
+	/* fflush(stdout); */
+	/* map_stdout(1, 9, res2); */
+	/* printf("coucou23\n"); */
+	/* fflush(stdout); */
+	/* map_stdout(0, 9, res2); */
+	/* printf("middle = %s", res); */
+	/* printf("end = %s", res2); */
+	/* fflush(stdout); */
+	char *res = calloc(2147483648, sizeof(char));
+	char *res2 = calloc(2147483648, sizeof(char));
+	if (!res || !res2)
+	{
+		perror("calloc error.");
+		exit(1);
+	}
+	map_stdout(1, 2147483647, NULL);
 	printf("%02147483647d", 23);
 	fflush(stdout);
-	pipe_stdout(0);
-	printf("coucou3\n");
+	bzero(res, 2147483648);
+	map_stdout(0, 2147483647, res);
+	map_stdout(1, 2147483647, NULL);
+	printf("%02147483647d", 23);
 	fflush(stdout);
-	/* printf("%s", pipe_buff); */
+	bzero(res2, 2147483648);
+	map_stdout(0, 2147483647, res2);
+	if (strncmp(res, res2, 2147483647))
+		printf("Not the same !!!\n");
+	else
+		printf("The same !!!\n");
+	/* int fd = open("tmp", O_WRONLY | O_CREAT, 0666); */
+	/* write(fd, res, 2147483648); */
+	/* close(fd); */
+	free(res);
+	free(res2);
 }
 
 /* void	run_all(char *particular_fun, void *fun) */

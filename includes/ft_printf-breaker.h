@@ -6,7 +6,7 @@
 /*   By: bazaluga <bazaluga@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/02 10:31:56 by bazaluga          #+#    #+#             */
-/*   Updated: 2024/02/06 15:04:34 by bazaluga         ###   ########.fr       */
+/*   Updated: 2024/02/06 22:43:27 by bazaluga         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ extern t_ft				fcts[N_TESTS_FUN];
 extern print_buff		buff;
 extern int				g_in_fun;
 extern int				fds[2];
-extern char				pipe_buff[2147483648];
+extern char				pipe_buff[BUFFSIZE];
 extern int				g_free_called;
 
 /*********************************** MACROS ***********************************/
