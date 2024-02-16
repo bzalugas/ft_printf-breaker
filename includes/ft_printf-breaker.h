@@ -6,7 +6,7 @@
 /*   By: bazaluga <bazaluga@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/02 10:31:56 by bazaluga          #+#    #+#             */
-/*   Updated: 2024/02/06 22:43:27 by bazaluga         ###   ########.fr       */
+/*   Updated: 2024/02/16 17:30:57 by bazaluga         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,5 +140,9 @@ void	manage_pipes(int get_read, int get_write);
 char	*ft_strjoin(char const *s1, char const *s2);
 
 /****************************** TESTS FUNCTIONS *******************************/
+
+/******************************************************************************/
+
+int		ft_printf(const char *format, ...);
 
 #endif

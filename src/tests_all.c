@@ -6,7 +6,7 @@
 /*   By: bazaluga <bazaluga@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/02 10:32:11 by bazaluga          #+#    #+#             */
-/*   Updated: 2024/02/07 03:53:14 by bazaluga         ###   ########.fr       */
+/*   Updated: 2024/02/16 17:31:12 by bazaluga         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ void	map_stdout(char opt, size_t size, int start, char *res)
 	static char	map_name[] = "/map_out";
 	static char	*map = NULL;
 
-	if (opt == 1)
+	if (opt == 1) // start mapping stdout
 	{
 		if (fdout == -1)
 			fdout = dup(STDOUT_FILENO);
@@ -51,7 +51,7 @@ void	map_stdout(char opt, size_t size, int start, char *res)
 			dup2(fdmap, STDOUT_FILENO);
 		}
 	}
-	else if (opt == 2)
+	else if (opt == 2) // get result
 	{
 		if (!map)
 		{
@@ -66,7 +66,7 @@ void	map_stdout(char opt, size_t size, int start, char *res)
 		else
 			strncpy(res, &map[start], size);
 	}
-	else if (opt == 3)
+	else if (opt == 3) // close everything
 	{
 		close(STDOUT_FILENO);
 		close(fdmap);
@@ -76,7 +76,7 @@ void	map_stdout(char opt, size_t size, int start, char *res)
 		fdout = -1;
 		shm_unlink(map_name);
 	}
-	else
+	else // get result & close everything
 	{
 		if (!map)
 		{
@@ -128,7 +128,7 @@ void	test_int_max_ft_printf(char *str, va_list args)
 		printf("Strings are the same.\n");
 }
 
-void	test_ft_printf(int check_real, char *expected, int int_max, char *str, ...)
+void	test_ft_printf(int check_real, char *expected, int int_max, const char *str, ...)
 {
 	va_list	args;
 	va_start(args, str);
